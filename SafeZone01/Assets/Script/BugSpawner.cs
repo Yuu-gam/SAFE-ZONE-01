@@ -4,11 +4,13 @@ using UnityEngine.XR.ARSubsystems;
 
 public class BugSpawner : MonoBehaviour
 {
+
     public GameObject PF_BugDefault;
     ARPlaneManager arPlaneManager;
 
-    public float spawnProbability = 50f;    //벌레 생성 확률
-    private bool hasSpawned = false;        //벌레 중복 생성 방지
+    public float spawnProbability = 30f;    //벌레 생성 확률
+    public int maxSpawn = 3;              //벌레 생성 최대 마리 수
+    public int currentSpawned = 0;         //현재 생성된 벌레 마리 수
 
     private void Awake()
     {
@@ -35,13 +37,17 @@ public class BugSpawner : MonoBehaviour
     {
         foreach(var plane in args.added)
         {
-            if (hasSpawned) return;
+            Debug.Log("새로운 바닥 인식");
+
+            if (currentSpawned >= maxSpawn)
+            {
+                break;
+            }
 
             float rand = Random.Range(0f, 100f);
             if(rand <= spawnProbability)
             {
                 SpawnBug(plane);
-                hasSpawned = true;
                 break;
             }
         }
@@ -52,10 +58,15 @@ public class BugSpawner : MonoBehaviour
         if (PF_BugDefault == null) return;
         
         //인식된 바닥의 중심 좌표
-        Vector3 spawnPosition = plane.center;
+        Vector3 spawnPosition = plane.transform.TransformPoint(plane.center);
 
         //벌레 생성
         GameObject spawnedBug = Instantiate(PF_BugDefault, spawnPosition, Quaternion.identity);
+
+        BugMovement movement = spawnedBug.GetComponent<BugMovement>();
+        movement.bugSpawner = this;
+        
+        currentSpawned++;
         Debug.Log("생성");
     }
 }
