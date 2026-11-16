@@ -7,10 +7,11 @@ public class BugMovement : MonoBehaviour
     public BugSpawner bugSpawner;
     private Camera arCamera;
 
-    public float speed = 1f; //속도
+    public float speed = 0.5f; //속도
     public float moveRadius = 0.5f; //이동 반경
     public float lifeTime = 5f;
     private Vector3 targetPosition; //목표 지점
+
     private bool isDestroyed = false;
 
     void Start()
@@ -22,6 +23,8 @@ public class BugMovement : MonoBehaviour
 
     void Update()
     {
+        CheckTouchInput();
+
         //목표 지점으로 이동
         transform.position = Vector3.MoveTowards(transform.position, targetPosition, speed * Time.deltaTime);
 
@@ -73,6 +76,37 @@ public class BugMovement : MonoBehaviour
             bugSpawner.currentSpawned--;
         }
 
+        Debug.Log("삭제");
         Destroy(gameObject);
+    }
+
+
+    void CheckTouchInput()
+    {
+        if ((Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began) || Input.GetMouseButtonDown(0))
+        {
+            Vector2 inputPos = Input.touchCount > 0 ? Input.GetTouch(0).position : (Vector2)Input.mousePosition;
+
+            Ray ray = arCamera.ScreenPointToRay(inputPos);
+            RaycastHit hit;
+
+            // 레이저를 쏴서 내 몸(벌레)에 맞았는지 확인
+            if (Physics.Raycast(ray, out hit))
+            {
+                if (hit.transform == transform)
+                {
+                    CatchBug();
+                }
+            }
+        }
+    }
+
+    public void CatchBug()
+    {
+        if(bugSpawner != null)
+        {
+            RemoveBug();
+            Debug.Log("포획");
+        }
     }
 }

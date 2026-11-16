@@ -11,11 +11,15 @@ public class BugSpawner : MonoBehaviour
 
     public GameObject PF_BugDefault;
     ARPlaneManager arPlaneManager;
+    private Camera arCamera;
 
     public float spawnProbability = 30f;    //벌레 생성 확률
     public int maxSpawn = 3;              //벌레 생성 최대 마리 수
     public int currentSpawned = 0;         //현재 생성된 벌레 마리 수
     private float checkInterval = 2.0f;     //바닥 인식 텀
+
+    private float minSpawnDistance = 0.5f;
+    private float maxSpawnDistance = 3.0f;
 
     private Coroutine spawnRoutine;
 
@@ -69,12 +73,35 @@ public class BugSpawner : MonoBehaviour
 
     ARPlane GetRandomPlane()
     {
+        if (arCamera == null)
+        {
+            arCamera = Camera.main;
+            if (arCamera == null) return null;
+        }
+
         List<ARPlane> validPlanes = new List<ARPlane>();
         foreach(var plane in arPlaneManager.trackables)
         {
+            //수평 바닥인지 확인
             if(plane.alignment == PlaneAlignment.HorizontalUp)
             {
-                validPlanes.Add(plane);
+                Vector3 planeCenter = plane.transform.TransformPoint(plane.center);
+
+                // 2. 카메라와의 거리 계산
+                float distance = Vector3.Distance(arCamera.transform.position, planeCenter);
+                if (distance < minSpawnDistance || distance > maxSpawnDistance)
+                {
+                    continue; // 너무 가깝거나 멀면 패스
+                }
+
+                // 3. 카메라 시야(Viewport) 안에 있는지 확인 (Z > 0은 카메라 앞쪽을 의미)
+                Vector3 viewportPos = arCamera.WorldToViewportPoint(planeCenter);
+                if (viewportPos.z > 0 &&
+                    viewportPos.x >= 0.0f && viewportPos.x <= 1.0f &&
+                    viewportPos.y >= 0.0f && viewportPos.y <= 1.0f)
+                {
+                    validPlanes.Add(plane);
+                }
             }
         }
 
