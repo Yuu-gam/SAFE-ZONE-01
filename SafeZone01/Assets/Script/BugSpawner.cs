@@ -1,6 +1,10 @@
+using NUnit.Framework;
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.XR.ARFoundation;
 using UnityEngine.XR.ARSubsystems;
+using static UnityEngine.Rendering.GPUSort;
 
 public class BugSpawner : MonoBehaviour
 {
@@ -11,6 +15,9 @@ public class BugSpawner : MonoBehaviour
     public float spawnProbability = 30f;    //벌레 생성 확률
     public int maxSpawn = 3;              //벌레 생성 최대 마리 수
     public int currentSpawned = 0;         //현재 생성된 벌레 마리 수
+    private float checkInterval = 2.0f;     //바닥 인식 텀
+
+    private Coroutine spawnRoutine;
 
     private void Awake()
     {
@@ -19,38 +26,65 @@ public class BugSpawner : MonoBehaviour
 
     private void OnEnable()
     {
-        if (arPlaneManager != null)
-        {
-            arPlaneManager.trackablesChanged.AddListener(OnPlanesChanged);
-        }
+        spawnRoutine = StartCoroutine(SpawnRoutine());
     }
 
     private void OnDisable()
     {
-        if(arPlaneManager != null)
+        if(spawnRoutine != null)
         {
-            arPlaneManager.trackablesChanged.RemoveListener(OnPlanesChanged);
+            StopCoroutine(spawnRoutine);
         }
     }
 
-    void OnPlanesChanged(ARTrackablesChangedEventArgs<ARPlane> args)
+    IEnumerator SpawnRoutine()
     {
-        foreach(var plane in args.added)
-        {
-            Debug.Log("새로운 바닥 인식");
+        WaitForSeconds wait = new WaitForSeconds(checkInterval);
 
-            if (currentSpawned >= maxSpawn)
+        while(true)
+        {
+            yield return wait;
+
+            if(arPlaneManager == null)
             {
-                break;
+                continue;
+            }
+
+            if(arPlaneManager.trackables.count == 0 )
+            {
+                continue;
             }
 
             float rand = Random.Range(0f, 100f);
-            if(rand <= spawnProbability)
+            if (rand <= spawnProbability)
             {
-                SpawnBug(plane);
-                break;
+                ARPlane randomPlane = GetRandomPlane();
+                if(randomPlane != null)
+                {
+                    SpawnBug(randomPlane);
+                }
             }
         }
+    }
+
+    ARPlane GetRandomPlane()
+    {
+        List<ARPlane> validPlanes = new List<ARPlane>();
+        foreach(var plane in arPlaneManager.trackables)
+        {
+            if(plane.alignment == PlaneAlignment.HorizontalUp)
+            {
+                validPlanes.Add(plane);
+            }
+        }
+
+        if(validPlanes.Count == 0)
+        {
+            return null;
+        }
+
+        int randInt = Random.Range(0, validPlanes.Count);
+        return validPlanes[randInt];
     }
 
     void SpawnBug(ARPlane plane)
