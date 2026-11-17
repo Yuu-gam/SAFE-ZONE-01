@@ -1,5 +1,8 @@
 using JetBrains.Annotations;
 using UnityEngine;
+using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.EnhancedTouch;
+using Touch = UnityEngine.InputSystem.EnhancedTouch.Touch;
 using UnityEngine.XR.ARFoundation;
 
 public class BugMovement : MonoBehaviour
@@ -36,6 +39,17 @@ public class BugMovement : MonoBehaviour
 
         CheckScreenOut();
     }
+
+    void OnEnable()
+    {
+        EnhancedTouchSupport.Enable();
+    }
+
+    void OnDisable()
+    {
+        EnhancedTouchSupport.Disable();
+    }
+
 
     //랜덤으로 목표 지점 지정
     void ResetTarget()
@@ -83,14 +97,28 @@ public class BugMovement : MonoBehaviour
 
     void CheckTouchInput()
     {
-        if ((Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began) || Input.GetMouseButtonDown(0))
-        {
-            Vector2 inputPos = Input.touchCount > 0 ? Input.GetTouch(0).position : (Vector2)Input.mousePosition;
+        Vector2 inputPos = Vector2.zero;
+        bool isPressed = false;
 
+        // PC 환경: 마우스 왼쪽 클릭 체크
+        if (Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame)
+        {
+            inputPos = Mouse.current.position.ReadValue();
+            isPressed = true;
+        }
+        // 모바일 환경: 화면 터치 체크
+        else if (Touch.activeTouches.Count > 0)
+        {
+            inputPos = Touch.activeTouches[0].screenPosition;
+            isPressed = true;
+        }
+
+        // 감지 시 레이캐스트 발사
+        if (isPressed && arCamera != null)
+        {
             Ray ray = arCamera.ScreenPointToRay(inputPos);
             RaycastHit hit;
 
-            // 레이저를 쏴서 내 몸(벌레)에 맞았는지 확인
             if (Physics.Raycast(ray, out hit))
             {
                 if (hit.transform == transform)

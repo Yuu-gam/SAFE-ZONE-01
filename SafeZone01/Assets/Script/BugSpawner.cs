@@ -8,12 +8,13 @@ using static UnityEngine.Rendering.GPUSort;
 
 public class BugSpawner : MonoBehaviour
 {
-
-    public GameObject PF_BugDefault;
+    [SerializeField] private GPSManager gpsManager;
+    
+    public GameObject[] PF_Bug;
     ARPlaneManager arPlaneManager;
     private Camera arCamera;
 
-    public float spawnProbability = 30f;    //벌레 생성 확률
+    public float spawnProbability = 50f;    //벌레 생성 확률
     public int maxSpawn = 3;              //벌레 생성 최대 마리 수
     public int currentSpawned = 0;         //현재 생성된 벌레 마리 수
     private float checkInterval = 2.0f;     //바닥 인식 텀
@@ -116,18 +117,57 @@ public class BugSpawner : MonoBehaviour
 
     void SpawnBug(ARPlane plane)
     {
-        if (PF_BugDefault == null) return;
+        GameObject selectedBug = SelectBug();
+
+        if (selectedBug == null) return;
         
         //인식된 바닥의 중심 좌표
         Vector3 spawnPosition = plane.transform.TransformPoint(plane.center);
 
         //벌레 생성
-        GameObject spawnedBug = Instantiate(PF_BugDefault, spawnPosition, Quaternion.identity);
+        GameObject spawnedBug = Instantiate(selectedBug, spawnPosition, Quaternion.identity);
 
         BugMovement movement = spawnedBug.GetComponent<BugMovement>();
         movement.bugSpawner = this;
         
         currentSpawned++;
         Debug.Log("생성");
+    }
+
+
+    GameObject SelectBug()
+    {
+        if(PF_Bug == null || PF_Bug.Length == 0)
+        {
+            return null;
+        }
+
+
+        if (gpsManager.SpaceNum == 0) //공학관
+        {
+            return PF_Bug[0];
+        }
+
+        else if (gpsManager.SpaceNum == 1) //자하관
+        {
+            return PF_Bug[1];
+        }
+
+        else if (gpsManager.SpaceNum == 2) //월해관
+        {
+            return PF_Bug[2];
+        }
+
+        else if (gpsManager.SpaceNum == 3) //미백관
+        {
+            return PF_Bug[3];
+        }
+
+        else
+        {
+            return null;
+        }
+
+        //return PF_Bug[0];     디버그용
     }
 }

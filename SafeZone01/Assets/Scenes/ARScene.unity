@@ -610,8 +610,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e11f9f171757f6b44a3caa1d97452e37, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BugSpawner
-  PF_BugDefault: {fileID: 9192760444170759179, guid: b97283e5b0a5c674d91d576bbb67202e, type: 3}
-  spawnProbability: 30
+  gpsManager: {fileID: 1922686785}
+  PF_Bug:
+  - {fileID: 9192760444170759179, guid: b97283e5b0a5c674d91d576bbb67202e, type: 3}
+  - {fileID: 9192760444170759179, guid: 712dc15bc755b304f9382069bd390ab9, type: 3}
+  - {fileID: 9192760444170759179, guid: 50ea20f7d0af69243ae34ce74d0174e6, type: 3}
+  - {fileID: 9192760444170759179, guid: 1dfc0b8006fed2d46b520d275f6c7768, type: 3}
+  spawnProbability: 70
   maxSpawn: 3
   currentSpawned: 0
 --- !u!1 &1552924663
@@ -787,6 +792,53 @@ MonoBehaviour:
   m_ShadowLayerMask: 1
   m_RenderingLayers: 1
   m_ShadowRenderingLayers: 1
+--- !u!1 &1922686784
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1922686786}
+  - component: {fileID: 1922686785}
+  m_Layer: 0
+  m_Name: GPSManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1922686785
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1922686784}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cd23c41456c5b944faebcb48a67b3614, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GPSManager
+  UserLatitude: 0
+  UserLongitude: 0
+  SpaceNum: 100
+--- !u!4 &1922686786
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1922686784}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2035156298
 GameObject:
   m_ObjectHideFlags: 0
@@ -828,3 +880,4 @@ SceneRoots:
   - {fileID: 471807850}
   - {fileID: 681891655}
   - {fileID: 1552924665}
+  - {fileID: 1922686786}
