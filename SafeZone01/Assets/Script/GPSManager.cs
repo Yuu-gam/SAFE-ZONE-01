@@ -1,8 +1,10 @@
-using UnityEngine;
 using System.Collections;
+using UnityEngine;
+using static UnityEditor.ShaderGraph.Internal.KeywordDependentCollection;
 
 public class GPSManager : MonoBehaviour
 {
+    public static GPSManager Instance;
     public double UserLatitude;  // 위도
     public double UserLongitude; // 경도
     public int SpaceNum; // 건물
@@ -12,6 +14,8 @@ public class GPSManager : MonoBehaviour
 
     void Awake()
     {
+        Instance = this;
+
         // 공학관
         SpaceGPS[0, 0, 0] = 37.6018320408996;
         SpaceGPS[0, 0, 1] = 37.601384077026474;

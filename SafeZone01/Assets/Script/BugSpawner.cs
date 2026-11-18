@@ -7,9 +7,7 @@ using UnityEngine.XR.ARSubsystems;
 using static UnityEngine.Rendering.GPUSort;
 
 public class BugSpawner : MonoBehaviour
-{
-    [SerializeField] private GPSManager gpsManager;
-    
+{   
     public GameObject[] PF_Bug;
     ARPlaneManager arPlaneManager;
     private Camera arCamera;
@@ -127,7 +125,7 @@ public class BugSpawner : MonoBehaviour
         //벌레 생성
         GameObject spawnedBug = Instantiate(selectedBug, spawnPosition, Quaternion.identity);
 
-        BugMovement movement = spawnedBug.GetComponent<BugMovement>();
+        BugController movement = spawnedBug.GetComponent<BugController>();
         movement.bugSpawner = this;
         
         currentSpawned++;
@@ -143,22 +141,22 @@ public class BugSpawner : MonoBehaviour
         }
 
 
-        if (gpsManager.SpaceNum == 0) //공학관
+        if (GPSManager.Instance.SpaceNum == 0) //공학관
         {
             return PF_Bug[0];
         }
 
-        else if (gpsManager.SpaceNum == 1) //자하관
+        else if (GPSManager.Instance.SpaceNum == 1) //자하관
         {
             return PF_Bug[1];
         }
 
-        else if (gpsManager.SpaceNum == 2) //월해관
+        else if (GPSManager.Instance.SpaceNum == 2) //월해관
         {
             return PF_Bug[2];
         }
 
-        else if (gpsManager.SpaceNum == 3) //미백관
+        else if (GPSManager.Instance.SpaceNum == 3) //미백관
         {
             return PF_Bug[3];
         }

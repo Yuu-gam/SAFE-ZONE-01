@@ -5,7 +5,7 @@ using UnityEngine.InputSystem.EnhancedTouch;
 using Touch = UnityEngine.InputSystem.EnhancedTouch.Touch;
 using UnityEngine.XR.ARFoundation;
 
-public class BugMovement : MonoBehaviour
+public class BugController : MonoBehaviour
 {
     public BugSpawner bugSpawner;
     private Camera arCamera;
@@ -16,6 +16,7 @@ public class BugMovement : MonoBehaviour
     private Vector3 targetPosition; //목표 지점
 
     private bool isDestroyed = false;
+    private int catchCount = 0; //포획 횟수 확인
 
     void Start()
     {
@@ -84,8 +85,9 @@ public class BugMovement : MonoBehaviour
         }
 
         isDestroyed = true;
+        catchCount = 0;
 
-        if(bugSpawner != null)
+        if (bugSpawner != null)
         {
             bugSpawner.currentSpawned--;
         }
@@ -131,10 +133,22 @@ public class BugMovement : MonoBehaviour
 
     public void CatchBug()
     {
-        if(bugSpawner != null)
+        if(bugSpawner == null)
+        {
+            return;
+        }
+        else if(GPSManager.Instance.SpaceNum == 3)
+        {
+            catchCount++;
+            Debug.Log($"포획 시도:{catchCount}");
+            if (catchCount >= 5)
+            {
+                RemoveBug();
+            }
+        }
+        else
         {
             RemoveBug();
-            Debug.Log("포획");
         }
     }
 }
