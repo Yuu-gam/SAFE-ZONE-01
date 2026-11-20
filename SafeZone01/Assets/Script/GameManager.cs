@@ -5,6 +5,7 @@ public class GameManager : MonoBehaviour
     public static GameManager Instance;
 
     public int[] globalspace = new int[4];
+    public int[] globalbug = new int[4];
 
     private void Awake()
     {
