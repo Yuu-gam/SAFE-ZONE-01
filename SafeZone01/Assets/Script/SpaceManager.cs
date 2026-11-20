@@ -5,6 +5,6 @@ public class SpaceManager : MonoBehaviour
 {
     public void visitSpace(int spaceIndex)
     {
-        GameManager.Instance.globalspace[spaceIndex] = 1;
+        GameManager.Instance.globalbug[spaceIndex] = 1;
     }
 }

@@ -9,7 +9,7 @@ public class DiaryManager : MonoBehaviour
 
     private void Update()
     {
-        if (GameManager.Instance.globalspace[bug_index] == 1)
+        if (GameManager.Instance.globalbug[bug_index] == 1)
         {
             targetImage.sprite = changedSprite;
         }
