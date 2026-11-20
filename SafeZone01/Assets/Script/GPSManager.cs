@@ -41,12 +41,13 @@ public class GPSManager : MonoBehaviour
         SpaceGPS[3, 1, 1] = 126.95538991962945;
         */
 
+        
         // 테스트용 내 직장 주소
         SpaceGPS[2, 0, 0] = 37.634065772571816;
         SpaceGPS[2, 0, 1] = 37.63367430552205;
         SpaceGPS[2, 1, 0] = 126.91823682050416;
         SpaceGPS[2, 1, 1] = 126.918905671409;
-
+       
         // 테스트용 우리집 주소
         SpaceGPS[3, 0, 0] = 37.62143806712991;
         SpaceGPS[3, 0, 1] = 37.62110525025554;
@@ -103,6 +104,7 @@ public class GPSManager : MonoBehaviour
                 if(UserLatitude >= SpaceGPS[i, 0, 1] && UserLongitude <= SpaceGPS[i, 1, 1])
                 {
                     SpaceNum = i;
+                    GameManager.Instance.globalspace[i] = 1;
                     break;
                 }
             }
