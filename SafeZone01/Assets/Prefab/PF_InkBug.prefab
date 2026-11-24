@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 3306878233504447296}
   - component: {fileID: -2081676243661727390}
   m_Layer: 0
-  m_Name: PF_FluorescentBug
+  m_Name: PF_InkBug
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -129,3 +129,4 @@ MonoBehaviour:
   speed: 0.5
   moveRadius: 0.5
   lifeTime: 5
+  PF_Ink: {fileID: 5136510514552403106, guid: 214f8fc124df23c4cb39fcbf588393e6, type: 3}

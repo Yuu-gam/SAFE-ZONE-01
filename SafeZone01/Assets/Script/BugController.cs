@@ -12,17 +12,22 @@ public class BugController : MonoBehaviour
 
     public float speed = 0.5f; //속도
     public float moveRadius = 0.5f; //이동 반경
-    public float lifeTime = 5f;
     private Vector3 targetPosition; //목표 지점
 
     private bool isDestroyed = false;
     private int catchCount = 0; //포획 횟수 확인
 
+
+    //형광 안료종
+    public GameObject PF_Ink;
+    private float minInkDistance = 0.05f;
+    private Vector3 lastInkPosition;
+
     void Start()
     {
         arCamera = Camera.main;
+        lastInkPosition = transform.position;
         ResetTarget();
-        Destroy(gameObject, lifeTime);
     }
 
     void Update()
@@ -36,6 +41,11 @@ public class BugController : MonoBehaviour
         if (Vector3.Distance(transform.position, targetPosition) < 0.05f)
         {
             ResetTarget();
+        }
+
+        if(GPSManager.Instance.SpaceNum == 2)
+        {
+            SpawnInkTrail();
         }
 
         CheckScreenOut();
@@ -133,22 +143,45 @@ public class BugController : MonoBehaviour
 
     public void CatchBug()
     {
-        if(bugSpawner == null)
+        int[] bug = GameManager.Instance.globalbug;
+        int space = GPSManager.Instance.SpaceNum;
+
+        if (bugSpawner == null)
         {
             return;
         }
-        else if(GPSManager.Instance.SpaceNum == 3)
+
+        if(space == 3)
         {
             catchCount++;
             Debug.Log($"포획 시도:{catchCount}");
             if (catchCount >= 5)
             {
+                bug[3] = 1;
                 RemoveBug();
             }
         }
-        else
+        else if (0 <= space && space < bug.Length)
         {
+            bug[space] = 1;
             RemoveBug();
+        }
+    }
+
+
+    //잉크종 잉크 출력
+    void SpawnInkTrail()
+    {
+        if(PF_Ink == null)
+        {
+            return;
+        }
+
+        if(Vector3.Distance(transform.position, lastInkPosition) >= minInkDistance)
+        {
+            Vector3 inkPos = new Vector3(transform.position.x, transform.position.y + 0.005f, transform.position.z);
+            Instantiate(PF_Ink, inkPos, PF_Ink.transform.rotation);
+            lastInkPosition = transform.position;
         }
     }
 }

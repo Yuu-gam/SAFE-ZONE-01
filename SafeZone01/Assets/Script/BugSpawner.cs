@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.XR.ARFoundation;
 using UnityEngine.XR.ARSubsystems;
+using static UnityEditor.ShaderGraph.Internal.KeywordDependentCollection;
 using static UnityEngine.Rendering.GPUSort;
 
 public class BugSpawner : MonoBehaviour
@@ -17,10 +18,17 @@ public class BugSpawner : MonoBehaviour
     public int currentSpawned = 0;         //현재 생성된 벌레 마리 수
     private float checkInterval = 2.0f;     //바닥 인식 텀
 
+    //생성할 바닥과의 거리
     private float minSpawnDistance = 0.5f;
     private float maxSpawnDistance = 3.0f;
 
     private Coroutine spawnRoutine;
+
+
+    private void Start()
+    {
+        arCamera = Camera.main;
+    }
 
     private void Awake()
     {
@@ -74,8 +82,7 @@ public class BugSpawner : MonoBehaviour
     {
         if (arCamera == null)
         {
-            arCamera = Camera.main;
-            if (arCamera == null) return null;
+            return null;
         }
 
         List<ARPlane> validPlanes = new List<ARPlane>();
@@ -93,7 +100,7 @@ public class BugSpawner : MonoBehaviour
                     continue; // 너무 가깝거나 멀면 패스
                 }
 
-                // 3. 카메라 시야(Viewport) 안에 있는지 확인 (Z > 0은 카메라 앞쪽을 의미)
+                // 3. 카메라 시야(Viewport) 안에 있는지 확인 (Z > 0은 카메라 앞쪽)
                 Vector3 viewportPos = arCamera.WorldToViewportPoint(planeCenter);
                 if (viewportPos.z > 0 &&
                     viewportPos.x >= 0.0f && viewportPos.x <= 1.0f &&
@@ -135,37 +142,13 @@ public class BugSpawner : MonoBehaviour
 
     GameObject SelectBug()
     {
-        if(PF_Bug == null || PF_Bug.Length == 0)
+        int space = GPSManager.Instance.SpaceNum;
+
+        //프리팹이 비지 않고, space값이 0~3 사이 일 때
+        if (PF_Bug != null && space < PF_Bug.Length && 0 <= space && space < 4)
         {
-            return null;
+            return PF_Bug[space];
         }
-
-
-        if (GPSManager.Instance.SpaceNum == 0) //공학관
-        {
-            return PF_Bug[0];
-        }
-
-        else if (GPSManager.Instance.SpaceNum == 1) //자하관
-        {
-            return PF_Bug[1];
-        }
-
-        else if (GPSManager.Instance.SpaceNum == 2) //월해관
-        {
-            return PF_Bug[2];
-        }
-
-        else if (GPSManager.Instance.SpaceNum == 3) //미백관
-        {
-            return PF_Bug[3];
-        }
-
-        else
-        {
-            return null;
-        }
-
-        //return PF_Bug[0];     디버그용
+        return null;
     }
 }

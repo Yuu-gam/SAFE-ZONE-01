@@ -5,8 +5,10 @@ using static UnityEditor.ShaderGraph.Internal.KeywordDependentCollection;
 public class GPSManager : MonoBehaviour
 {
     public static GPSManager Instance;
+
     public double UserLatitude;  // 위도
     public double UserLongitude; // 경도
+    
     public int SpaceNum; // 건물
 
     // 장소, 시작-끝 위도, 시작-끝 경도
@@ -14,7 +16,16 @@ public class GPSManager : MonoBehaviour
 
     void Awake()
     {
-        Instance = this;
+        // Singleton 설정
+        if (Instance == null)
+        {
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
 
         // 공학관
         SpaceGPS[0, 0, 0] = 37.6018320408996;
