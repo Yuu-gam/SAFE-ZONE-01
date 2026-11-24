@@ -18,7 +18,7 @@ public class BugController : MonoBehaviour
     private int catchCount = 0; //포획 횟수 확인
 
 
-    //형광 안료종
+    //형광안료종
     public GameObject PF_Ink;
     private float minInkDistance = 0.05f;
     private Vector3 lastInkPosition;
@@ -169,7 +169,7 @@ public class BugController : MonoBehaviour
     }
 
 
-    //잉크종 잉크 출력
+    //형광안료종 잉크 출력
     void SpawnInkTrail()
     {
         if(PF_Ink == null)
