@@ -440,6 +440,7 @@ GameObject:
   - component: {fileID: 585755674}
   - component: {fileID: 585755673}
   - component: {fileID: 585755678}
+  - component: {fileID: 585755679}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -712,6 +713,21 @@ MonoBehaviour:
     m_VarianceClampScale: 0.9
     m_ContrastAdaptiveSharpening: 0
   m_Version: 2
+--- !u!114 &585755679
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 585755671}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 573d0034b943e4d4795aff06a5861025, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ARGlitchController
+  glitchMaterial: {fileID: 2100000, guid: 537971a63afc9f4439c14d9a4bc416ba, type: 2}
+  glitchDuration: 0.3
+  maxIntensity: 1
 --- !u!1 &668614105
 GameObject:
   m_ObjectHideFlags: 0
@@ -893,12 +909,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e11f9f171757f6b44a3caa1d97452e37, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BugSpawner
+  glitchController: {fileID: 585755679}
   PF_Bug:
   - {fileID: 9192760444170759179, guid: b97283e5b0a5c674d91d576bbb67202e, type: 3}
   - {fileID: 9192760444170759179, guid: 712dc15bc755b304f9382069bd390ab9, type: 3}
   - {fileID: 9192760444170759179, guid: 50ea20f7d0af69243ae34ce74d0174e6, type: 3}
   - {fileID: 9192760444170759179, guid: 1dfc0b8006fed2d46b520d275f6c7768, type: 3}
-  spawnProbability: 70
+  spawnProbability: 30
   maxSpawn: 3
   currentSpawned: 0
 --- !u!1 &1216476364

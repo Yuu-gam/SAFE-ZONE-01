@@ -8,8 +8,9 @@ using static UnityEditor.ShaderGraph.Internal.KeywordDependentCollection;
 using static UnityEngine.Rendering.GPUSort;
 
 public class BugSpawner : MonoBehaviour
-{   
-    public GameObject[] PF_Bug;
+{
+    [SerializeField] private ARGlitchController glitchController;
+    [SerializeField] private GameObject[] PF_Bug;
     ARPlaneManager arPlaneManager;
     private Camera arCamera;
 
@@ -134,6 +135,11 @@ public class BugSpawner : MonoBehaviour
 
         BugController movement = spawnedBug.GetComponent<BugController>();
         movement.bugSpawner = this;
+
+        if(selectedBug == PF_Bug[0])
+        {
+            glitchController.TriggerGlitch();
+        }
         
         currentSpawned++;
         Debug.Log("생성");
