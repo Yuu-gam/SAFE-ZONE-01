@@ -4,9 +4,11 @@ using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.EnhancedTouch;
 using Touch = UnityEngine.InputSystem.EnhancedTouch.Touch;
 using UnityEngine.XR.ARFoundation;
+using System.Collections;
 
 public class BugController : MonoBehaviour
 {
+
     public BugSpawner bugSpawner;
     private Camera arCamera;
 
@@ -18,14 +20,31 @@ public class BugController : MonoBehaviour
     private int catchCount = 0; //포획 횟수 확인
 
 
+    //글리치종
+    public ARGlitchController glitchController;
+    private Renderer[] renderers;
+    private float hideDuration = 1.0f; //순간이동 주기
+    private float hidePerSecond = 0.2f; //초당 20% 확률로 사라짐
+    private float hideCooldown = 3.0f; //3초 쿨타임
+    private float cooldownTimer = 0f;
+    private bool isHiding = false;
+
+
     //형광안료종
     public GameObject PF_Ink;
     private float minInkDistance = 0.05f;
     private Vector3 lastInkPosition;
 
+
     void Start()
     {
         arCamera = Camera.main;
+        if (arCamera != null && glitchController == null)
+        {
+            glitchController = arCamera.GetComponent<ARGlitchController>();
+        }
+
+        renderers = GetComponentsInChildren<Renderer>(true);
         lastInkPosition = transform.position;
         ResetTarget();
     }
@@ -43,7 +62,24 @@ public class BugController : MonoBehaviour
             ResetTarget();
         }
 
-        if(GPSManager.Instance.SpaceNum == 2)
+
+        //글리치종이라면 순간이동
+        if(cooldownTimer > 0f)
+        {
+            cooldownTimer -= Time.deltaTime;
+        }
+        if (GPSManager.Instance.SpaceNum == 0 && !isHiding && cooldownTimer <= 0f)
+        {
+            if (Random.value < hidePerSecond * Time.deltaTime)
+            {
+                cooldownTimer = hideCooldown;
+                StartCoroutine(HideRoutine(hideDuration));
+            }
+        }
+
+
+        //형광안료종이라면 트레일 출력
+        if (GPSManager.Instance.SpaceNum == 2) 
         {
             SpawnInkTrail();
         }
@@ -169,7 +205,33 @@ public class BugController : MonoBehaviour
     }
 
 
-    //형광안료종 잉크 출력
+    //글리치종 순간이동
+    IEnumerator HideRoutine(float duration)
+    {
+        isHiding = true;
+        SetRenderers(false);
+        glitchController?.TriggerGlitch();
+        Debug.Log("순간이동");
+
+        yield return new WaitForSeconds(duration);
+
+        isHiding = false;
+        SetRenderers(true);
+        glitchController?.TriggerGlitch();
+    }
+    void SetRenderers(bool enabled)
+    {
+        foreach(var renderer in renderers)
+        {
+            if (renderer != null)
+            {
+                renderer.enabled = enabled;
+            }
+        }
+    }
+
+
+    //형광안료종 트레일 출력
     void SpawnInkTrail()
     {
         if(PF_Ink == null)
